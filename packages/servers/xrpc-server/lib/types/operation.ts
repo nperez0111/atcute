@@ -7,7 +7,7 @@ import type {
 } from '@atcute/lexicons/validations';
 
 import type { Literal, Promisable } from './misc.js';
-import type { BlobResponse, JSONResponse } from './response.js';
+import type { JSONResponse } from './response.js';
 
 export type UnknownOperationContext = {
 	request: Request;
@@ -34,7 +34,7 @@ export type QueryHandler<TQuery extends XRPCQueryMetadata> = (
 		? Response | void
 		: TQuery['output'] extends XRPCLexBodyParam
 			? Response | JSONResponse<InferOutput<TQuery['output']['schema']>>
-			: Response | BlobResponse
+			: Response
 >;
 
 export type QueryConfig<TQuery extends XRPCQueryMetadata = XRPCQueryMetadata> = {
@@ -66,7 +66,7 @@ export type ProcedureHandler<TProcedure extends XRPCProcedureMetadata> = (
 	TProcedure['output'] extends null
 		? Response | void
 		: TProcedure['output'] extends XRPCLexBodyParam
-			? Response | InferOutput<TProcedure['output']['schema']>
+			? Response | JSONResponse<InferOutput<TProcedure['output']['schema']>>
 			: Response
 >;
 

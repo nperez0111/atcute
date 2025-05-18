@@ -1,14 +1,11 @@
 import { safeParse, type XRPCProcedureMetadata, type XRPCQueryMetadata } from '@atcute/lexicons/validations';
 
 import type { Literal, Promisable } from './types/misc.js';
-import type {
-	ProcedureConfig,
-	QueryConfig,
-	QueryHandler,
-	UnknownOperationContext,
-} from './types/operation.js';
+import type { ProcedureConfig, QueryConfig, UnknownOperationContext } from './types/operation.js';
+
 import { constructParamsHandler } from './utils/request-params.js';
 import { invalidRequest, validationError } from './utils/response.js';
+
 import { XRPCError } from './xrpc-error.js';
 
 const JSON_TYPE_RE = /^\s*application\/json\s*(?:$|;)/i;
@@ -115,18 +112,14 @@ export class XRPCRouter {
 					return output;
 				}
 
-				if (output !== undefined) {
-					return Response.json(output);
-				}
-
 				return new Response(null);
 			},
 		};
 	}
 
-	procedure<TProcedure extends XRPCProcedureMetadata, const TConfig extends ProcedureConfig<TProcedure>>(
+	procedure<TProcedure extends XRPCProcedureMetadata>(
 		procedure: TProcedure,
-		config: TConfig,
+		config: ProcedureConfig<TProcedure>,
 	): void {
 		const handleParams = procedure.params ? constructParamsHandler(procedure.params) : null;
 
@@ -202,10 +195,6 @@ export class XRPCRouter {
 					return output;
 				}
 
-				if (output !== undefined) {
-					return Response.json(output);
-				}
-
 				return new Response(null);
 			},
 		};
@@ -215,31 +204,3 @@ export class XRPCRouter {
 const isBodyPresent = (headers: Headers): boolean => {
 	return headers.get('content-length') !== null && headers.get('transfer-encoding') !== null;
 };
-
-import { AppBskyActorGetProfile, AppBskyFeedGetPostThread } from '@atcute/bluesky';
-import { ComAtprotoSyncGetBlob } from '@atcute/atproto';
-import { json } from './types/response.js';
-
-const router = new XRPCRouter();
-router.query(AppBskyFeedGetPostThread.mainSchema, {
-	handler: async ({ params }) => {
-		return json({
-			thread: {
-				$type: 'app.bsky.feed.defs#threadViewPost',
-				post: {} as any,
-				replies: [
-					{
-						$type: 'app.bsky.feed.defs#threadViewPost',
-						post: {} as any,
-					},
-				],
-			},
-		});
-	},
-});
-
-router.query(ComAtprotoSyncGetBlob.mainSchema, {
-	async handler({ params }) {
-		return json(new Uint8Array(2));
-	},
-});

@@ -23,7 +23,10 @@
 		"prepublish": "rm -rf dist; pnpm run build"
 	},
 	"dependencies": {
-		"@atcute/lexicons": "workspace:^"
+		"@atcute/identity": "workspace:^",
+		"@atcute/identity-resolver": "workspace:^",
+		"@atcute/lexicons": "workspace:^",
+		"@badrap/valita": "^0.4.4"
 	},
 	"devDependencies": {
 		"@atcute/atproto": "workspace:^",
